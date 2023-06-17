@@ -1,0 +1,9 @@
+com:
+  behl:
+    receptacle:
+      aws:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+        s3:
+          bucket-name: ${AWS_S3_BUCKET_NAME}
+          region: ${AWS_S3_REGION}

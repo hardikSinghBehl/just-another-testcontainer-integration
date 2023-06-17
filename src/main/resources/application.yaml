@@ -9,3 +9,10 @@ com:
           region: ${AWS_S3_REGION}
           presigned-url:
             expiration-time: 300
+            
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOSTNAME}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}

@@ -23,12 +23,12 @@ public class CacheService {
         redisTemplate.opsForValue().setIfPresent(key, value);
     }
 
-    public <T> Optional<T> fetch(@NonNull final String key, @NonNull final Class<T> destinationClass) {
+    public <T> Optional<T> fetch(@NonNull final String key, @NonNull final Class<T> targetClass) {
         final var value = Optional.ofNullable(redisTemplate.opsForValue().get(key));
         if (value.isEmpty()) {
             return Optional.empty();          
         }
-        T result = objectMapper.convertValue(value.get(), destinationClass);
+        T result = objectMapper.convertValue(value.get(), targetClass);
         return Optional.of(result);
     }
     

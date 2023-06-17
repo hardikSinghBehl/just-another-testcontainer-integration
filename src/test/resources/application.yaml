@@ -8,3 +8,5 @@ com:
           bucket-name: test-bucket
           region: test-region
           endpoint: test-endpoint
+          presigned-url:
+            expiration-time: 10

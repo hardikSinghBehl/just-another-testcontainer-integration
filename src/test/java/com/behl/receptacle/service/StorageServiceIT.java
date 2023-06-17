@@ -1,10 +1,14 @@
 package com.behl.receptacle.service;
 
+import static com.amazonaws.HttpMethod.GET;
+import static com.amazonaws.HttpMethod.PUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,10 +17,16 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.containers.localstack.LocalStackContainer.Service;
@@ -117,6 +127,42 @@ class StorageServiceIT {
         final var retrievedObject = storageService.retrieve(key);
        
         assertThat(retrievedObject.isEmpty()).isTrue();
+    }
+    
+    @Test
+    @SneakyThrows
+    void shouldGeneratePresignedUrlAndUploadObjectToBucket() {
+        final var key = RandomString.make(10) + ".txt";
+        final var fileContent = RandomString.make(50);
+        final var fileToUpload = createTextFile(key, fileContent);
+        
+        final var presignedUrl = storageService.generatePresignedUrl(key, PUT);
+        
+        final var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_PLAIN);
+        final var requestEntity = new RequestEntity<>(fileToUpload.getBytes(), httpHeaders, HttpMethod.PUT, new URI(presignedUrl));
+        final var responseEntity = new RestTemplate().exchange(requestEntity, Void.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        final var savedObjects = amazonS3.listObjects(BUCKET_NAME).getObjectSummaries();
+        assertThat(savedObjects).anyMatch(objectSummary -> objectSummary.getKey().equals(key));
+    }
+    
+    @Test
+    @SneakyThrows
+    void shouldGeneratePresignedUrlToFetchStoredObjectFromBucket() {
+        final var key = RandomString.make(10) + ".txt";
+        final var fileContent = RandomString.make(50);
+        final var fileToUpload = createTextFile(key, fileContent);
+        storageService.save(fileToUpload);
+
+        final var presignedUrl = storageService.generatePresignedUrl(key, GET);
+
+        final var restTemplate = new RestTemplate();
+        final var requestEntity = new RequestEntity<>(HttpMethod.GET, new URI(presignedUrl));
+        final var responseEntity = restTemplate.exchange(requestEntity, byte[].class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        final var retrievedContent = new String(responseEntity.getBody(), StandardCharsets.UTF_8);
+        assertThat(retrievedContent).isEqualTo(fileContent);
     }
     
     @SneakyThrows

@@ -18,6 +18,15 @@ public class AwsS3ConfigurationProperties {
         private String bucketName;
         private String region;
         private String endpoint;
+        private PresignedUrl presignedUrl = new PresignedUrl();
+
+        @Getter
+        @Setter
+        public class PresignedUrl {
+
+            private Integer expirationTime;
+
+        }
 
     }
 

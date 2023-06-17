@@ -39,8 +39,8 @@ public class CacheService {
     }
     
     public void delete(@NonNull final String key) {
-        redisTemplate.delete(key);
-        log.info("Deleted cached value with key '{}'", key);
+        final var deletionStatus = redisTemplate.delete(key);
+        log.info("Deleted cached value with key '{}' {}", key, deletionStatus ? "Successfully" : "Unsuccessfully");
     }
 
 }

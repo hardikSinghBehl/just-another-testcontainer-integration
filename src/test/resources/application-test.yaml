@@ -15,5 +15,5 @@ spring:
   data:
     redis:
       host: test-redis-host
-      port: 0000
+      port: 6666
       password: test-redis-password

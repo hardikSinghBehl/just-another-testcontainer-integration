@@ -1,0 +1,10 @@
+com:
+  behl:
+    receptacle:
+      aws:
+        access-key: test-access-key
+        secret-access-key: test-secret
+        s3:
+          bucket-name: test-bucket
+          region: test-region
+          endpoint: test-endpoint

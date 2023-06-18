@@ -17,3 +17,7 @@ spring:
       host: test-redis-host
       port: 6666
       password: test-redis-password
+  datasource:
+    url: test-database-url
+    username: test-database-username
+    password: test-database-password

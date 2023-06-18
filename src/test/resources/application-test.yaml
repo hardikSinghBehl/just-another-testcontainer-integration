@@ -10,6 +10,10 @@ com:
           endpoint: test-endpoint
           presigned-url:
             expiration-time: 10
+      kafka:
+        topic-name:
+          customer-registered-event: test-customer-registered-event-topic-name
+          customer-account-risk-assessment: test-customer-account-risk-assessment-topic-name
             
 spring:
   data:
@@ -21,3 +25,5 @@ spring:
     url: test-database-url
     username: test-database-username
     password: test-database-password
+  kafka:
+    bootstrap-servers: test-kafka-bootstrap-server

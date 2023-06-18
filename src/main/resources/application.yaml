@@ -9,6 +9,10 @@ com:
           region: ${AWS_S3_REGION}
           presigned-url:
             expiration-time: 300
+      kafka:
+        topic-name:
+          customer-registered-event: customer-account-registered-event
+          customer-account-risk-assessment: initiate-customer-risk-assessment
             
 spring:
   data:

@@ -8,6 +8,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class KafkaConfiguration {
     public KafkaTemplate<String, Object> kafkaTemplate(final KafkaProperties kafkaProperties) {
         final var kafkaProducerProperties = kafkaProperties.buildProducerProperties();
         final var producerFactory = new DefaultKafkaProducerFactory<String, Object>(kafkaProducerProperties);
+        producerFactory.setValueSerializer(new JsonSerializer<>());
         return new KafkaTemplate<>(producerFactory);
     }
     

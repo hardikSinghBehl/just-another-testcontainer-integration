@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -25,6 +27,7 @@ import net.bytebuddy.utility.RandomString;
 @ActiveProfiles("test")
 @ExtendWith(IntroduceDelay.Extension.class)
 @EnableConfigurationProperties(KafkaConfiguration.class)
+@EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
 public class CustomerRegisteredEventListenerIT {
 
     @Autowired

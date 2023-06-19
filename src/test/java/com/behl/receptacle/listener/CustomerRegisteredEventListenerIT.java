@@ -2,7 +2,6 @@ package com.behl.receptacle.listener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -57,8 +56,6 @@ public class CustomerRegisteredEventListenerIT {
         customerDto.setEmailId(RandomString.make() + "@domain.com");
 
         kafkaTemplate.send(customerRegisteredEventTopic, customerDto);
-
-        TimeUnit.SECONDS.sleep(1);
 
         final var kafkaConsumer = KafkaTestUtil.getConsumer(kafkaContainer.getBootstrapServers(), initiateRiskAssessmentTopic);
         final var receivedMessages = kafkaConsumer.poll(Duration.ofMillis(5000));

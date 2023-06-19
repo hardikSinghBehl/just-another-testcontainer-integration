@@ -2,9 +2,7 @@ package com.behl.receptacle.listener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
@@ -14,9 +12,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
-import com.behl.receptacle.IntroduceDelay;
 import com.behl.receptacle.KafkaTestUtil;
 import com.behl.receptacle.configuration.KafkaConfiguration;
 import com.behl.receptacle.dto.CustomerDto;
@@ -25,7 +22,6 @@ import net.bytebuddy.utility.RandomString;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ExtendWith(IntroduceDelay.Extension.class)
 @EnableConfigurationProperties(KafkaConfiguration.class)
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
 public class CustomerRegisteredEventListenerIT {
@@ -36,10 +32,10 @@ public class CustomerRegisteredEventListenerIT {
     @Autowired
     private KafkaConfiguration kafkaConfiguration;
 
-    private static KafkaContainer kafkaContainer;
+    private static RedpandaContainer kafkaContainer;
 
     static {
-        kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
+        kafkaContainer = new RedpandaContainer(DockerImageName.parse("docker.redpanda.com/redpandadata/redpanda:v22.2.13"));
         kafkaContainer.start();
     }
 
@@ -50,7 +46,6 @@ public class CustomerRegisteredEventListenerIT {
 
     @Test
     @SneakyThrows
-    @IntroduceDelay(seconds = 5)
     void shouldConsumeCustomerRegisteredEventAndInitiateRiskAssessment() {
         final var customerRegisteredEventTopic = kafkaConfiguration.getCustomerRegisteredEvent();
         final var initiateRiskAssessmentTopic = kafkaConfiguration.getCustomerAccountRiskAssessment();
@@ -61,8 +56,6 @@ public class CustomerRegisteredEventListenerIT {
         customerDto.setEmailId(RandomString.make() + "@domain.com");
 
         kafkaTemplate.send(customerRegisteredEventTopic, customerDto);
-
-        TimeUnit.SECONDS.sleep(1);
 
         final var kafkaConsumer = KafkaTestUtil.getConsumer(kafkaContainer.getBootstrapServers(), initiateRiskAssessmentTopic);
         final var receivedMessages = kafkaConsumer.poll(Duration.ofMillis(5000));

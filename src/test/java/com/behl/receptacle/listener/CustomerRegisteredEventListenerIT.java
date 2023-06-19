@@ -14,7 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
 import com.behl.receptacle.IntroduceDelay;
 import com.behl.receptacle.KafkaTestUtil;
@@ -36,10 +36,10 @@ public class CustomerRegisteredEventListenerIT {
     @Autowired
     private KafkaConfiguration kafkaConfiguration;
 
-    private static KafkaContainer kafkaContainer;
+    private static RedpandaContainer kafkaContainer;
 
     static {
-        kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
+        kafkaContainer = new RedpandaContainer(DockerImageName.parse("vectorized/redpanda:v22.2.13"));
         kafkaContainer.start();
     }
 

@@ -39,7 +39,7 @@ public class CustomerRegisteredEventListenerIT {
     private static RedpandaContainer kafkaContainer;
 
     static {
-        kafkaContainer = new RedpandaContainer(DockerImageName.parse("vectorized/redpanda:v22.2.13"));
+        kafkaContainer = new RedpandaContainer(DockerImageName.parse("docker.redpanda.com/redpandadata/redpanda:v22.2.13"));
         kafkaContainer.start();
     }
 

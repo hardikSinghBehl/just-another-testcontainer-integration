@@ -21,10 +21,25 @@ import lombok.Setter;
 @ConfigurationProperties(prefix = "com.behl.receptacle.kafka.topic-name")
 public class KafkaConfiguration {
     
-    @NotBlank
+    /**
+     * <p>
+     * The kafka topic name to be consumed for Customer registration event. This property corresponds
+     * to the key <code>com.behl.receptacle.kafka.topic-name.customer-registered-event</code> in the
+     * active .yaml configuration file.
+     * </p>
+     */
+    @NotBlank(message = "customer registered event topic name must be configured")
     private String customerRegisteredEvent;
   
-    @NotBlank
+    /**
+     * <p>
+     * The kafka topic name to which customer account risk assessment initiation message is to be
+     * published. This property corresponds to the key
+     * <code>com.behl.receptacle.kafka.topic-name.customer-account-risk-assessment</code> in the
+     * active .yaml configuration file.
+     * </p>
+     */
+    @NotBlank(message = "customer account risk assessment topic name must be configured")
     private String customerAccountRiskAssessment;
   
     @Bean

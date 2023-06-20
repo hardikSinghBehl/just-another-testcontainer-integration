@@ -37,12 +37,16 @@ public class PersistenceServiceIT {
 
     @Test
     void shouldReturnNonEmptyCountryListPostFlywayMigrationExecution() {
+        // Retrieve the list of countries saved in the datasource
         final var countries = persistenceService.getAllCountries();
+        
+        // Verify that the list of countries is not empty and flyway migration script is executed
         assertThat(countries).isNotEmpty();
     }
 
     @Test
     void shouldSaveUserRecordInDatabaseAndReturnValidUserId() {
+        // Prepare test data
         final var firstName = RandomString.make(10);
         final var lastName = RandomString.make(10);
         final var country = persistenceService.getAllCountries().stream().findAny().orElse(null);
@@ -51,8 +55,10 @@ public class PersistenceServiceIT {
         user.setLastName(lastName);
         user.setCountry(country);
 
+        // Save the user record in datasource
         final var savedUserId = persistenceService.saveUser(user);
 
+        // Fetch the user from the datasource using the assigned user ID and validate data integrity
         final var fetchedUser = persistenceService.getUserById(savedUserId);
         assertThat(fetchedUser.getId()).isEqualTo(savedUserId);
         assertThat(fetchedUser.getFirstName()).isEqualTo(firstName);
@@ -62,18 +68,24 @@ public class PersistenceServiceIT {
     
     @Test
     void shouldDeleteSavedUserRecordInDatabase() {
+        // Prepare test data
         final var country = persistenceService.getAllCountries().stream().findAny().orElse(null);
         final var user = new User();
         user.setFirstName(RandomString.make(10));
         user.setLastName(RandomString.make(10));
         user.setCountry(country);
+        
+        // Save the user record in datasource
         final var savedUserId = persistenceService.saveUser(user);
 
+        // Fetch the user from the datasource using the assigned user ID and validate correctness
         final var fetchedUser = persistenceService.getUserById(savedUserId);
         assertThat(fetchedUser.getId()).isEqualTo(savedUserId); 
         
+        // Delete the user record from the datasource
         persistenceService.deleteUser(savedUserId);
         
+        // Verify that attempting to fetch the deleted user results throws EntityNotFoundException
         assertThrows(EntityNotFoundException.class, () -> persistenceService.getUserById(savedUserId));
      }
 

@@ -20,6 +20,14 @@ public class CustomerRegisteredEventListener {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final KafkaConfiguration kafkaConfiguration;
 
+    /**
+     * Listens to the messages sent to the customer registration event topic and initiates the risk
+     * assessment process for the corresponding registered customer record by making an asynchronous
+     * call to the customer risk assessment topic.
+     * 
+     * @see KafkaConfiguration#getCustomerRegisteredEvent()
+     * @see KafkaConfiguration#getCustomerAccountRiskAssessment()
+     */
     @SneakyThrows
     @KafkaListener(topics = "${com.behl.receptacle.kafka.topic-name.customer-registered-event}",
             groupId = "customer-registered-event-consumer")

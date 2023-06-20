@@ -28,6 +28,15 @@ public class StorageService {
     private final AmazonS3 amazonS3;
     private final AwsS3ConfigurationProperties awsS3ConfigurationProperties;
 
+    /**
+     * Saves the provided file to the configured Amazon S3 bucket.
+     *
+     * @param file The file to be saved.
+     * @return {@code true} if the file is successfully saved to configured S3 bucket, indicating a
+     *         successful operation and {@code false} if there was an error or the file couldn't be
+     *         saved.
+     * @throws IllegalArgumentException if the {@code file} parameter is {@code null}.
+     */
     public Boolean save(@NonNull final MultipartFile file) {
         final var bucketName = awsS3ConfigurationProperties.getS3().getBucketName();
         final var key = file.getOriginalFilename();
@@ -44,6 +53,14 @@ public class StorageService {
         return Boolean.TRUE;
     }
 
+    /**
+     * Retrieves the object with the specified key from the configured Amazon S3 bucket.
+     *
+     * @param objectKey The key of the object to be retrieved.
+     * @return An {@link Optional} containing the retrieved {@link S3Object}, or an empty
+     *         {@link Optional} if the object is not found or encountered an error during retrieval.
+     * @throws IllegalArgumentException if the {@code objectKey} parameter is {@code null}.
+     */
     public Optional<S3Object> retrieve(@NonNull final String objectKey) {
         final var bucketName = awsS3ConfigurationProperties.getS3().getBucketName();
         log.info("Retrieving object {} from S3 bucket {}", objectKey, bucketName);
@@ -57,6 +74,16 @@ public class StorageService {
         }
     }
     
+    /**
+     * Generates a presigned URL for the object with the specified key in the configured Amazon S3
+     * bucket.
+     *
+     * @param objectKey The key of the object for which a presigned URL is to be generated.
+     * @param httpMethod The HTTP method/operation required to be performed against the generated
+     *        presigned URL.
+     * @return The generated presigned URL as a {@link String}.
+     * @throws IllegalArgumentException if any of the arguments are {@code null}.
+     */
     @SneakyThrows
     public String generatePresignedUrl(@NonNull final String objectKey, @NonNull final HttpMethod httpMethod) {
         final var bucketName = awsS3ConfigurationProperties.getS3().getBucketName();

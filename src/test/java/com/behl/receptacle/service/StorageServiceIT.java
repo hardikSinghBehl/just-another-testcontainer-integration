@@ -75,17 +75,20 @@ class StorageServiceIT {
     
     @BeforeAll
     void setUp() {
-        createS3Bucket();
+        amazonS3.createBucket(BUCKET_NAME);
     }
     
     @Test
     void shouldSaveFileSuccessfullyToBucket() {
+        // Prepate test file to upload
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
         
+        // Save the generated file to the storage service
         final var result = storageService.save(fileToUpload);
         
+        // Verify that the file is saved successfully by checking if it exists in the bucket
         final var savedObjects = amazonS3.listObjects(BUCKET_NAME).getObjectSummaries();
         assertThat(result).isTrue();
         assertThat(savedObjects).anyMatch(objectSummary -> objectSummary.getKey().equals(key));
@@ -93,27 +96,37 @@ class StorageServiceIT {
     
     @Test
     void shouldNotSaveFileToNonexistentBucket() {
-        final var nonExistingBucketName = RandomString.make(20).toLowerCase();
+        // Prepate test file to upload
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
+        
+        // Configure a non-existent bucket name
+        final var nonExistingBucketName = RandomString.make(20).toLowerCase();
         awsS3ConfigurationProperties.getS3().setBucketName(nonExistingBucketName);
         
+        // Save the generated file to the storage service
         final var result = storageService.save(fileToUpload);
         
+        // Verify that the file is not saved
         assertThat(result).isFalse();
+        
+        // Reset the bucket name to the original value
         awsS3ConfigurationProperties.getS3().setBucketName(BUCKET_NAME);
     }
     
     @Test
     void shouldFetchSavedFileSuccessfullyFromBucketForValidKey() {
+        // Prepate test file and upload to storage service
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
         storageService.save(fileToUpload);
         
+        // Retrieve the file from the storage service using prepared key
         final var retrievedObject = storageService.retrieve(key);
         
+        // Read the retrieved content and assert integrity
         final var retrievedContent = new BufferedReader(new InputStreamReader(retrievedObject.get().getObjectContent()))
             .lines().collect(Collectors.joining("\n"));
         assertThat(retrievedObject.isPresent()).isTrue();
@@ -125,22 +138,28 @@ class StorageServiceIT {
     
     @Test
     void shouldReturnEmptyObjectFromBucketForInvalidKey() {
+        // Generate an invalid key
         final var key = RandomString.make(10) + ".txt";
         
+        // Retrieve the file from the storage service using the invalid key
         final var retrievedObject = storageService.retrieve(key);
        
+        // Verify that the retrieved object is empty
         assertThat(retrievedObject.isEmpty()).isTrue();
     }
     
     @Test
     @SneakyThrows
     void shouldGeneratePresignedUrlAndUploadObjectToBucket() {
+        // Prepate test file to upload
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
         
+        // Generate a presigned URL for uploading the object to the bucket
         final var presignedUrl = storageService.generatePresignedUrl(key, PUT);
         
+        // Upload the test file using the presgined URL and verify that it's saved in the bucket
         final var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.TEXT_PLAIN);
         final var requestEntity = new RequestEntity<>(fileToUpload.getBytes(), httpHeaders, HttpMethod.PUT, new URI(presignedUrl));
@@ -153,13 +172,16 @@ class StorageServiceIT {
     @Test
     @SneakyThrows
     void shouldGeneratePresignedUrlToFetchStoredObjectFromBucket() {
+        // Prepate test file and upload to storage service
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
         storageService.save(fileToUpload);
 
+        // Generate a presigned URL for fetching the stored object from the bucket
         final var presignedUrl = storageService.generatePresignedUrl(key, GET);
 
+        // Perform a GET request to the presigned URL and verify the retrieved content matches the expected file content.
         final var restTemplate = new RestTemplate();
         final var requestEntity = new RequestEntity<>(HttpMethod.GET, new URI(presignedUrl));
         final var responseEntity = restTemplate.exchange(requestEntity, byte[].class);
@@ -174,10 +196,6 @@ class StorageServiceIT {
         InputStream inputStream = new ByteArrayInputStream(fileContentBytes);
   
         return new MockMultipartFile(fileName, fileName, FILE_CONTENT_TYPE, inputStream);
-    }
-    
-    private void createS3Bucket() {
-        amazonS3.createBucket(BUCKET_NAME);
     }
 
 }

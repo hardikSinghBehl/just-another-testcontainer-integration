@@ -47,16 +47,21 @@ public class CustomerRegisteredEventListenerIT {
     @Test
     @SneakyThrows
     void shouldConsumeCustomerRegisteredEventAndInitiateRiskAssessment() {
+        // Fetch the topic names defined in the configuration file
         final var customerRegisteredEventTopic = kafkaConfiguration.getCustomerRegisteredEvent();
         final var initiateRiskAssessmentTopic = kafkaConfiguration.getCustomerAccountRiskAssessment();
+        
+        // create message object
         final var customerDto = new CustomerDto();
         customerDto.setId(RandomString.make(10));
         customerDto.setFirstName(RandomString.make(10));
         customerDto.setLastName(RandomString.make(10));
         customerDto.setEmailId(RandomString.make() + "@domain.com");
 
+        // Send a message to customer registered event topic
         kafkaTemplate.send(customerRegisteredEventTopic, customerDto);
 
+        // Verify that a message is received on the initiate risk assessment topic and contains the expected data
         final var kafkaConsumer = KafkaTestUtil.getConsumer(kafkaContainer.getBootstrapServers(), initiateRiskAssessmentTopic);
         final var receivedMessages = kafkaConsumer.poll(Duration.ofMillis(5000));
         assertThat(receivedMessages.count()).isEqualTo(1);

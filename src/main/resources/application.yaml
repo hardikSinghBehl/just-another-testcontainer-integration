@@ -24,6 +24,6 @@ spring:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}

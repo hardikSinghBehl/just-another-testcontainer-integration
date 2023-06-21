@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.utility.DockerImageName;
 import com.behl.receptacle.entity.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,18 +21,18 @@ public class PersistenceServiceIT {
     @Autowired
     private PersistenceService persistenceService;
 
-    private static MySQLContainer<?> mySQLContainer;
+    private static MSSQLServerContainer<?> msSqlServerContainer;
 
     static { 
-        mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8"));
-        mySQLContainer.start();
+        msSqlServerContainer = new MSSQLServerContainer<>(DockerImageName.parse("mcr.microsoft.com/mssql/server")).acceptLicense();
+        msSqlServerContainer.start();
     }
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", mySQLContainer::getUsername);
-        registry.add("spring.datasource.password", mySQLContainer::getPassword);
+        registry.add("spring.datasource.url", msSqlServerContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", msSqlServerContainer::getUsername);
+        registry.add("spring.datasource.password", msSqlServerContainer::getPassword);
     }
 
     @Test

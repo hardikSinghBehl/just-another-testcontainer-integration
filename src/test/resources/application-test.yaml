@@ -28,9 +28,5 @@ spring:
     url: test-database-url
     username: test-database-username
     password: test-database-password
-  jpa:
-    properties:
-      hibernate:   
-        dialect: org.hibernate.dialect.MySQL8Dialect
   kafka:
     bootstrap-servers: 0.0.0.0:0000

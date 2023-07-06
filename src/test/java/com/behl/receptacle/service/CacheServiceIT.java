@@ -3,15 +3,11 @@ package com.behl.receptacle.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
+import com.behl.receptacle.TestContainerExtension;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -19,28 +15,11 @@ import net.bytebuddy.utility.RandomString;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
+@ExtendWith(TestContainerExtension.class)
 public class CacheServiceIT {
   
     @Autowired
     private CacheService cacheService;
-  
-    private static GenericContainer<?> redisContainer;
-    private static int redisPort = 6379;
-    private static String redisPassword = RandomString.make(10);
-  
-    static {
-        redisContainer = new GenericContainer<>(DockerImageName.parse("redis:7.0.11-alpine3.18"))
-            .withExposedPorts(redisPort).withCommand("redis-server", "--requirepass", redisPassword);
-        redisContainer.start();
-    }
-    
-    @DynamicPropertySource
-    static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.host", redisContainer::getHost);
-        registry.add("spring.data.redis.port", () -> String.valueOf(redisContainer.getMappedPort(redisPort)));
-        registry.add("spring.data.redis.password", () -> redisPassword);
-    }
     
     @Test
     @SneakyThrows

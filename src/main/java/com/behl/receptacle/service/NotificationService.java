@@ -6,6 +6,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import com.behl.receptacle.configuration.EmailClientConfigurationProperties;
 import com.behl.receptacle.dto.EmailDispatchRequest;
@@ -41,12 +43,13 @@ public class NotificationService {
 
         final var apiUrl = emailClientConfigurationProperties.getBaseUrl() + SEND_EMAIL_API_PATH;
         final var requestEntity = new HttpEntity<EmailDispatchRequest>(emailDispatchRequest, headers);
-        final var response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, Void.class);
         
-        if (!response.getStatusCode().is2xxSuccessful()) {
+        try {
+            restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, Void.class); 
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.error("Unable to send email notification to {}", emailDispatchRequest.getRecipient(), exception);
             return Boolean.FALSE;
         }
-        
         log.info("Successfully sent email notification to {}", emailDispatchRequest.getRecipient());
         return Boolean.TRUE;
     }

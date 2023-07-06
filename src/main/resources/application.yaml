@@ -13,6 +13,9 @@ com:
         topic-name:
           customer-registered-event: customer-account-registered-event
           customer-account-risk-assessment: initiate-customer-risk-assessment
+      email:
+        base-url: ${EMAIL_SERVER_BASE_URL}
+        api-key: ${EMAIL_SERVER_API_KEY}
             
 spring:
   data:

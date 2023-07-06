@@ -14,6 +14,9 @@ com:
         topic-name:
           customer-registered-event: test-customer-registered-event-topic-name
           customer-account-risk-assessment: test-customer-account-risk-assessment-topic-name
+      email:
+        base-url: test-email-server-base-url
+        api-key: test-email-server-api-key
             
 spring:
   data:

@@ -1,4 +1,4 @@
-package com.behl.receptacle.service;
+package com.behl.receptacle.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockserver.model.HttpRequest.request;
@@ -23,10 +23,10 @@ import net.bytebuddy.utility.RandomString;
 @SpringBootTest
 @ActiveProfiles("test")
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
-public class NotificationServiceIT {
+public class EmailApiClientIT {
   
     @Autowired
-    private NotificationService notificationService;  
+    private EmailApiClient emailApiClient;  
   
     private static MockServerClient mockServerClient;
     private static final String EMAIL_SERVER_API_KEY  = RandomString.make(20);
@@ -56,20 +56,20 @@ public class NotificationServiceIT {
         // Set up mock server to expect the egress HTTP request
         mockServerClient
             .when(request()
-                .withPath(NotificationService.SEND_EMAIL_API_PATH)
+                .withPath(EmailApiClient.SEND_EMAIL_API_PATH)
                 .withHeader("Authorization", "Bearer " + EMAIL_SERVER_API_KEY)
                 .withBody(emailDispatchJsonRequest).withMethod(HttpMethod.POST.name()))
             .respond(response()
                 .withStatusCode(200));
         
         // Send email notification
-        final var response = notificationService.sendEmail(emailDispatchRequest);
+        final var response = emailApiClient.sendEmail(emailDispatchRequest);
         
         // Verify response and mock server interaction
         assertThat(response).isTrue();
         mockServerClient.verify(
             request()
-                .withPath(NotificationService.SEND_EMAIL_API_PATH)
+                .withPath(EmailApiClient.SEND_EMAIL_API_PATH)
                 .withHeader("Authorization", "Bearer " + EMAIL_SERVER_API_KEY)
                 .withBody(emailDispatchJsonRequest).withMethod(HttpMethod.POST.name()),
             VerificationTimes.once()
@@ -88,20 +88,20 @@ public class NotificationServiceIT {
         // Set up mock server to expect the egress HTTP request and return HttpStatus.503
         mockServerClient
             .when(request()
-                .withPath(NotificationService.SEND_EMAIL_API_PATH)
+                .withPath(EmailApiClient.SEND_EMAIL_API_PATH)
                 .withHeader("Authorization", "Bearer " + EMAIL_SERVER_API_KEY)
                 .withBody(emailDispatchJsonRequest).withMethod(HttpMethod.POST.name()))
             .respond(response()
                 .withStatusCode(503));
         
         // Send email notification
-        final var response = notificationService.sendEmail(emailDispatchRequest);
+        final var response = emailApiClient.sendEmail(emailDispatchRequest);
         
         // Verify response and mock server interaction
         assertThat(response).isFalse();
         mockServerClient.verify(
             request()
-                .withPath(NotificationService.SEND_EMAIL_API_PATH)
+                .withPath(EmailApiClient.SEND_EMAIL_API_PATH)
                 .withHeader("Authorization", "Bearer " + EMAIL_SERVER_API_KEY)
                 .withBody(emailDispatchJsonRequest).withMethod(HttpMethod.POST.name()),
             VerificationTimes.once()

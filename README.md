@@ -30,7 +30,7 @@ Testcontainers has been used to test the below modules in the application:
 
 #### Outbound API Communication (Egress HTTP call)
 
-- **Integration Test:** [NotificationServiceIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/service/NotificationServiceIT.java)
+- **Integration Test:** [EmailApiClientIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/client/EmailApiClientIT.java)
 - **Description:** This test validates the egress/external HTTP call made by the application to send email notifications. The test utilizes [MockServer](https://www.mock-server.com/) to mock the server's response and verify the interaction with the server. The test covers scenarios such as successful email notification dispatch and failure scenarios with appropriate error handling.
 
 ---

@@ -1,4 +1,4 @@
-package com.behl.receptacle.service;
+package com.behl.receptacle.client;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpEntity;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @EnableConfigurationProperties(EmailClientConfigurationProperties.class)
-public class NotificationService {
+public class EmailApiClient {
   
     private final RestTemplate restTemplate;
     private final EmailClientConfigurationProperties emailClientConfigurationProperties;

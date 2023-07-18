@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import com.behl.receptacle.configuration.EmailClientConfigurationProperties;
 import com.behl.receptacle.dto.EmailDispatchRequest;
+import com.behl.receptacle.exception.ApiFailureException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class EmailApiClient {
      * 
      * @see com.behl.receptacle.configuration.EmailClientConfigurationProperties
      */
-    public boolean sendEmail(@NonNull final EmailDispatchRequest emailDispatchRequest) { 
+    public void sendEmail(@NonNull final EmailDispatchRequest emailDispatchRequest) { 
         log.info("Sending email notification to {}", emailDispatchRequest.getRecipient());
         
         final var headers = new HttpHeaders();
@@ -48,10 +49,9 @@ public class EmailApiClient {
             restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity, Void.class); 
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.error("Unable to send email notification to {}", emailDispatchRequest.getRecipient(), exception);
-            return Boolean.FALSE;
+            throw new ApiFailureException(exception);
         }
         log.info("Successfully sent email notification to {}", emailDispatchRequest.getRecipient());
-        return Boolean.TRUE;
     }
 
 }

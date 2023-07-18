@@ -1,6 +1,6 @@
 package com.behl.receptacle.client;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
 import com.behl.receptacle.dto.EmailDispatchRequest;
+import com.behl.receptacle.exception.ApiFailureException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import net.bytebuddy.utility.RandomString;
 
 @SpringBootTest
@@ -45,7 +47,8 @@ public class EmailApiClientIT {
     }
     
     @Test
-    void shouldSendEmailNotificationForValidRequest() throws Exception {
+    @SneakyThrows
+    void shouldSendEmailNotificationForValidRequest() {
         // Prepare test data
         final var recipient = RandomString.make(10) + "@domain.com";
         final var subject = RandomString.make(20);
@@ -63,10 +66,9 @@ public class EmailApiClientIT {
                 .withStatusCode(200));
         
         // Send email notification
-        final var response = emailApiClient.sendEmail(emailDispatchRequest);
+        emailApiClient.sendEmail(emailDispatchRequest);
         
-        // Verify response and mock server interaction
-        assertThat(response).isTrue();
+        // Verify mock server interaction
         mockServerClient.verify(
             request()
                 .withPath(EmailApiClient.SEND_EMAIL_API_PATH)
@@ -77,7 +79,8 @@ public class EmailApiClientIT {
     }
     
     @Test
-    void shouldReturnFalseIfEmailNotificationDispatchFails() throws Exception {
+    @SneakyThrows
+    void shouldThrowApiFailureExceptionIfEmailNotificationDispatchFails() {
         // Prepare test data
         final var recipient = RandomString.make(10) + "@domain.com";
         final var subject = RandomString.make(20);
@@ -94,11 +97,10 @@ public class EmailApiClientIT {
             .respond(response()
                 .withStatusCode(503));
         
-        // Send email notification
-        final var response = emailApiClient.sendEmail(emailDispatchRequest);
+        // Send email notification and assert exception
+        assertThrows(ApiFailureException.class, () -> emailApiClient.sendEmail(emailDispatchRequest));
         
-        // Verify response and mock server interaction
-        assertThat(response).isFalse();
+        // Verify mock server interaction
         mockServerClient.verify(
             request()
                 .withPath(EmailApiClient.SEND_EMAIL_API_PATH)

@@ -1,4 +1,5 @@
-## Just another Testcontainer integration
+## Just another Testcontainer integration 
+[![Just another Testcontainers integration workflow status](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/actions/workflows/maven.yml)
 
 A reference proof-of-concept that leverages [Testcontainers](https://testcontainers.com/) to execute integration tests in a Java Spring-boot backend application. The POC focuses on key modules including a Database, Cache, Cloud Storage Service, External HTTP calls and a Message Broker to ensure their seamless integration. 
 

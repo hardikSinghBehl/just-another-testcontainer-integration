@@ -1,9 +1,6 @@
 package com.behl.receptacle.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +29,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Configuration
 @ConfigurationProperties(prefix = "com.behl.receptacle.email")
 public class EmailClientConfigurationProperties {
 
@@ -52,10 +48,5 @@ public class EmailClientConfigurationProperties {
      * </p>
      */
     private String apiKey;
-    
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 
 }

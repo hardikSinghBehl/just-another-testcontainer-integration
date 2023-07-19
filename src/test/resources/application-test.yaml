@@ -34,3 +34,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   kafka:
     bootstrap-servers: 0.0.0.0:0000
+    
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF

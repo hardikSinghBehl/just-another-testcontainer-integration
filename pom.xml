@@ -110,6 +110,17 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>toxiproxy</artifactId>
+			<version>${testcontainer.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>eu.rekawek.toxiproxy</groupId>
+			<artifactId>toxiproxy-java</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mock-server</groupId>
 			<artifactId>mockserver-client-java</artifactId>
 			<version>5.15.0</version>

@@ -8,10 +8,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import com.behl.receptacle.configuration.EmailClientConfigurationProperties;
 import com.behl.receptacle.dto.EmailDispatchRequest;
 import com.behl.receptacle.exception.ApiFailureException;
+import com.behl.receptacle.exception.ApiUnreachableException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,9 @@ public class EmailApiClient {
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.error("Unable to send email notification to {}", emailDispatchRequest.getRecipient(), exception);
             throw new ApiFailureException(exception);
+        } catch (ResourceAccessException exception) {
+            log.error("Unable to communicate with configured API client to send email notification to {}", emailDispatchRequest.getRecipient(), exception);
+            throw new ApiUnreachableException(exception);
         }
         log.info("Successfully sent email notification to {}", emailDispatchRequest.getRecipient());
     }

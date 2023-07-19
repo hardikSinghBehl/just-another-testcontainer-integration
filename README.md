@@ -1,7 +1,7 @@
 ## Just another Testcontainer integration 
 [![Just another Testcontainers integration workflow status](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/actions/workflows/maven.yml)
 
-A reference proof-of-concept that leverages [Testcontainers](https://testcontainers.com/) to execute integration tests in a Java Spring-boot backend application. The POC focuses on key modules including a Database, Cache, Cloud Storage Service, External HTTP calls and a Message Broker to ensure their seamless integration. 
+A reference proof-of-concept that leverages [Testcontainers](https://testcontainers.com/) to execute integration tests in a Java Spring-boot backend application. The POC focuses on key modules including a Database, Cache, Cloud Storage Service, External HTTP calls including Chaos testing and a Message Broker to ensure their seamless integration. 
 
 ### Usage
 
@@ -33,6 +33,11 @@ Testcontainers has been used to test the below modules in the application:
 
 - **Integration Test:** [EmailApiClientIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/client/EmailApiClientIT.java)
 - **Description:** This test validates the egress/external HTTP call made by the application to send email notifications. The test utilizes [MockServer](https://www.mock-server.com/) to mock the server's response and verify the interaction with the server. The test covers scenarios such as successful email notification dispatch and failure scenarios with appropriate error handling.
+
+#### Chaos Testing 
+
+- **Integration Test:** [EmailApiClientChaosIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/client/EmailApiClientChaosIT.java)
+- **Description:** This test validates the application's resilience to Network Failures and Timeouts during egress API communication which has been simulated by using [Toxiproxy](https://github.com/Shopify/toxiproxy). The test covers scenarios such as handling socket timeout exceptions and proper error handling during API communication failures. [RestTemplate](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/main/java/com/behl/receptacle/configuration/RestTemplateConfiguration.java) has been specifically configured with low timeout durations for this purpose.
 
 ---
 

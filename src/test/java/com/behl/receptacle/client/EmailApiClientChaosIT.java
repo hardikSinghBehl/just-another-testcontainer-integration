@@ -61,7 +61,7 @@ public class EmailApiClientChaosIT {
     
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        final var baseUrl = "http://127.0.0.2:" + toxiproxyContainer.getMappedPort(8666);
+        final var baseUrl = "http://25.12.19.99:" + toxiproxyContainer.getMappedPort(8666);
         registry.add("com.behl.receptacle.email.base-url", () -> baseUrl);
         registry.add("com.behl.receptacle.email.api-key", () -> EMAIL_SERVER_API_KEY);
     }
@@ -86,7 +86,7 @@ public class EmailApiClientChaosIT {
                 .withStatusCode(200));
         
         // Set up toxiproxy and configure latency
-        final var emailServerProxy = toxiproxyClient.createProxy("email-server", "127.0.0.2:8666", "127.0.0.1:" + mockServerClient.getPort());
+        final var emailServerProxy = toxiproxyClient.createProxy("email-server", "0.0.0.0:8666", "127.0.0.1:" + mockServerClient.getPort());
         emailServerProxy.toxics().latency("email-server-latency", ToxicDirection.DOWNSTREAM, Duration.ofSeconds(30).toMillis());
         
         // Send email notification and verify exception thrown

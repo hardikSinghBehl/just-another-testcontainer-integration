@@ -9,6 +9,10 @@ com:
           region: ${AWS_S3_REGION}
           presigned-url:
             expiration-time: 300
+      azure:
+        blob-storage:
+          container: ${AZURE_BLOB_CONTAINER}
+          connection-string: ${AZURE_BLOB_CONNECTION_STRING}
       kafka:
         topic-name:
           customer-registered-event: customer-account-registered-event

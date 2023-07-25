@@ -13,7 +13,7 @@ com:
       azure:
         blob-storage:
           container: test-blob-container-name
-          connection-string: test-blob-connection-string
+          connection-string: DefaultEndpointsProtocol=https;AccountName=test-account-name;AccountKey=test-account-key;EndpointSuffix=test-endpoint-suffix
       kafka:
         topic-name:
           customer-registered-event: test-customer-registered-event-topic-name

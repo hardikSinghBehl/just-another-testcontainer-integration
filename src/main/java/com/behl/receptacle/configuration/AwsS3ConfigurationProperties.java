@@ -16,7 +16,7 @@ import lombok.Setter;
  * Bucket in S3.
  * </p>
  * 
- * @see com.behl.receptacle.service.StorageService
+ * @see com.behl.receptacle.service.AwsStorageService
  */
 @Getter
 @Setter

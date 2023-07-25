@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @EnableConfigurationProperties(value = AwsS3ConfigurationProperties.class)
-public class StorageService {
+public class AwsStorageService {
 
     private final AmazonS3 amazonS3;
     private final AwsS3ConfigurationProperties awsS3ConfigurationProperties;

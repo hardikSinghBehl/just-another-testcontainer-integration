@@ -43,10 +43,10 @@ import net.bytebuddy.utility.RandomString;
 @TestInstance(Lifecycle.PER_CLASS)
 @EnableAutoConfiguration(exclude = FlywayAutoConfiguration.class)
 @EnableConfigurationProperties(AwsS3ConfigurationProperties.class)
-class StorageServiceIT {
+class AwsStorageServiceIT {
     
     @Autowired
-    private StorageService storageService;  
+    private AwsStorageService awsStorageService;  
     
     @Autowired
     private AmazonS3 amazonS3;
@@ -86,7 +86,7 @@ class StorageServiceIT {
         final var fileToUpload = createTextFile(key, fileContent);
         
         // Save the generated file to the storage service
-        final var result = storageService.save(fileToUpload);
+        final var result = awsStorageService.save(fileToUpload);
         
         // Verify that the file is saved successfully by checking if it exists in the bucket
         final var savedObjects = amazonS3.listObjects(BUCKET_NAME).getObjectSummaries();
@@ -106,7 +106,7 @@ class StorageServiceIT {
         awsS3ConfigurationProperties.getS3().setBucketName(nonExistingBucketName);
         
         // Save the generated file to the storage service
-        final var result = storageService.save(fileToUpload);
+        final var result = awsStorageService.save(fileToUpload);
         
         // Verify that the file is not saved
         assertThat(result).isFalse();
@@ -121,10 +121,10 @@ class StorageServiceIT {
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
-        storageService.save(fileToUpload);
+        awsStorageService.save(fileToUpload);
         
         // Retrieve the file from the storage service using prepared key
-        final var retrievedObject = storageService.retrieve(key);
+        final var retrievedObject = awsStorageService.retrieve(key);
         
         // Read the retrieved content and assert integrity
         final var retrievedContent = new BufferedReader(new InputStreamReader(retrievedObject.get().getObjectContent()))
@@ -142,7 +142,7 @@ class StorageServiceIT {
         final var key = RandomString.make(10) + ".txt";
         
         // Retrieve the file from the storage service using the invalid key
-        final var retrievedObject = storageService.retrieve(key);
+        final var retrievedObject = awsStorageService.retrieve(key);
        
         // Verify that the retrieved object is empty
         assertThat(retrievedObject.isEmpty()).isTrue();
@@ -157,7 +157,7 @@ class StorageServiceIT {
         final var fileToUpload = createTextFile(key, fileContent);
         
         // Generate a presigned URL for uploading the object to the bucket
-        final var presignedUrl = storageService.generatePresignedUrl(key, PUT);
+        final var presignedUrl = awsStorageService.generatePresignedUrl(key, PUT);
         
         // Upload the test file using the presgined URL and verify that it's saved in the bucket
         final var httpHeaders = new HttpHeaders();
@@ -176,10 +176,10 @@ class StorageServiceIT {
         final var key = RandomString.make(10) + ".txt";
         final var fileContent = RandomString.make(50);
         final var fileToUpload = createTextFile(key, fileContent);
-        storageService.save(fileToUpload);
+        awsStorageService.save(fileToUpload);
 
         // Generate a presigned URL for fetching the stored object from the bucket
-        final var presignedUrl = storageService.generatePresignedUrl(key, GET);
+        final var presignedUrl = awsStorageService.generatePresignedUrl(key, GET);
 
         // Perform a GET request to the presigned URL and verify the retrieved content matches the expected file content.
         final var restTemplate = new RestTemplate();

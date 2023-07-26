@@ -1,7 +1,7 @@
 ## Just another Testcontainer integration 
 [![Just another Testcontainers integration workflow status](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/actions/workflows/maven.yml)
 
-A reference proof-of-concept that leverages [Testcontainers](https://testcontainers.com/) to execute integration tests in a Java Spring-boot backend application. The POC focuses on key modules including a Database, Cache, Cloud Storage Service, External HTTP calls including Chaos testing and a Message Broker to ensure their seamless integration. 
+A reference proof-of-concept that leverages [Testcontainers](https://testcontainers.com/) to execute integration tests in a Java Spring-boot backend application. The POC focuses on key modules including a Database, Cache, Cloud Storage Services, External HTTP calls including Chaos testing and a Message Broker to ensure their seamless integration. 
 
 ### Usage
 
@@ -9,9 +9,13 @@ Testcontainers has been used to test the below modules in the application:
 
 #### AWS Simple Storage Service (S3)
 
-- **Integration Test:** [StorageServiceIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/service/StorageServiceIT.java)
+- **Integration Test:** [AwsStorageServiceIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/service/AwsStorageServiceIT.java)
 - **Description:** This test validates the integration between the application and the AWS S3 cloud storage service by utilizing [Localstack](https://localstack.cloud/). It ensures proper functionality for file upload, retrieval, and generation of Presigned-URLs for uploading and fetching objects with an expiration time constraint. Profile specific Beans are created in [AwsS3Configuration.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/main/java/com/behl/receptacle/configuration/AwsS3Configuration.java)
 
+#### Azure Blob Storage
+
+- **Integration Test:** [AzureStorageServiceIT.java](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/blob/main/src/test/java/com/behl/receptacle/service/AzureStorageServiceIT.java)
+- **Description:** This test validates the integration between the application and the Azure Blob Storage service using [Azurite](https://github.com/Azure/Azurite), an official emulator compatible against Azure Storage API. The test ensures proper functionality for file upload and verifies the scenarios of retrieving and deleting blobs from the provisioned container. A Generic container with Azurite v3 Docker Image is started as there is currently no official Testcontainers module for Java.
 
 #### Kafka Consumer and Producer
 
@@ -71,3 +75,4 @@ An alternative approach wherein a [Centralized TestContainer Extension](https://
 The test classes are annotated with `@ExtendWith(TestContainerExtension.class)`  which automates container initialization and configuration of necessary properties. This centralized approach simplifies the setup and management of test containers, promoting code reusability and reducing duplication across test classes.
 
 **Implementation Branch**: [feature/centralized-testcontainer-extension](https://github.com/hardikSinghBehl/just-another-testcontainer-integration/tree/feature/centralized-testcontainer-extension)
+
